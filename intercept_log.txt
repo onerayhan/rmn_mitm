@@ -1,0 +1,12 @@
+Time between request and response: 0.30 seconds
+Response intercepted:
+Time between request and response: 0.39 seconds
+Response intercepted:
+Time between request and response: 0.23 seconds
+Response intercepted:
+Time between request and response: 0.21 seconds
+Response intercepted:
+Time between request and response: 0.24 seconds
+Response intercepted:
+Time between request and response: 0.24 seconds
+Response intercepted:
