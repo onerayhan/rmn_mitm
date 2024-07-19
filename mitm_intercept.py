@@ -9,7 +9,7 @@ class InterceptAddon:
 
     def __init__(self):
         self.semaphore = threading.Semaphore(0)
-        self.setup_release_semaphore_at_9am()
+        #self.setup_release_semaphore_at_9am()
         self.start_time = None
         self.end_time = None
         self.log_file = "intercept_log.txt"
@@ -38,17 +38,17 @@ class InterceptAddon:
             flow.intercept()
             # Modify the request
             if "application/x-www-form-urlencoded" in flow.request.headers.get("Content-Type", ""):
-                flow.request.urlencoded_form["data_programarii"] = "2024-11-17"
+                flow.request.urlencoded_form["data_programarii"] = "2024-11-19"
                 flow.request.urlencoded_form["tip_formular"] = "4"
-                time.sleep(5)
-                new_time = datetime.datetime.now().strftime("%a, %d %b %Y %H:%M:%S GMT")
-                flow.request.headers["Date"] = new_time
+                #time.sleep(5)
+                #new_time = datetime.datetime.now().strftime("%a, %d %b %Y %H:%M:%S GMT")
+                #flow.request.headers["Date"] = new_time
                 #self.semaphore.acquire()
-                print("Request modified to new date and tip_formular")
+                #print("Request modified to new date and tip_formular")
 
             # Wait until semaphore is released
-            self.start_time = time.time()  # Start time
-            print("Request sent at the specified time")
+            #self.start_time = time.time()  # Start time
+            #print("Request sent at the specified time")
             flow.resume()
 
 

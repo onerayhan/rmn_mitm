@@ -11,6 +11,31 @@ import threading
 
 DAY_ORDER_IN_CALENDAR = 15
 MONTH_ORDER_IN_CALENDAR = 10
+# Function to release the semaphore at 9:00 am Turkey time
+semaphore = threading.Semaphore(0)
+
+
+def release_semaphore_at_9am():
+
+    tz = pytz.timezone('Europe/Istanbul')
+    now = datetime.datetime.now(tz)
+    target_time = now.replace(hour=8, minute=59, second=59, microsecond=750000)
+    if now > target_time:
+        # If it's already past 9:00 am, set the target to 9:00 am the next day
+        target_time += datetime.timedelta(days=1)
+    time_to_wait = (target_time - now).total_seconds() - 10
+    if time_to_wait > 0:
+        time.sleep(time_to_wait)
+
+    # Spin lock for the remaining time
+    while datetime.datetime.now(tz) < target_time:
+        time.sleep(0.01)  # Check every 100 milliseconds
+
+    semaphore.release()
+
+
+thread = threading.Thread(target=release_semaphore_at_9am)
+thread.start()
 
 # Set up mitmproxy
 proxy = "localhost:8080"
@@ -19,6 +44,7 @@ proxy = "localhost:8080"
 chrome_options = Options()
 chrome_options.add_argument(f"--proxy-server=http://{proxy}")
 chrome_options.add_argument("--disable-extensions")
+chrome_options.add_argument("--headless")
 chrome_options.add_argument("--disable-gpu")
 chrome_options.add_argument("--no-sandbox")
 chrome_options.add_argument("--disable-dev-shm-usage")
@@ -52,14 +78,14 @@ select_element = Select(driver.find_element(By.ID, "tip_formular"))
 select_element.select_by_value("6")
 
 # Fill out the input fields
-driver.find_element(By.ID, "nume_pasaport").send_keys("Vuran")
-driver.find_element(By.ID, "prenume_pasaport").send_keys("Kivanc")
-driver.find_element(By.ID, "locul_nasterii").send_keys("Babaeski")
-driver.find_element(By.ID, "prenume_mama").send_keys("Aliye")
-driver.find_element(By.ID, "prenume_tata").send_keys("Nizamettin")
-driver.find_element(By.ID, "email").send_keys("ozkutpaslanmaz42@gmail.com")
-driver.find_element(By.ID, "numar_pasaport").send_keys("U14532425")
-driver.find_element(By.ID, "data_nasterii").send_keys("1979-01-22")
+driver.find_element(By.ID, "nume_pasaport").send_keys("Akyuz")
+driver.find_element(By.ID, "prenume_pasaport").send_keys("Huseyin")
+driver.find_element(By.ID, "locul_nasterii").send_keys("Istanbul")
+driver.find_element(By.ID, "prenume_mama").send_keys("Safiye")
+driver.find_element(By.ID, "prenume_tata").send_keys("Ahmet")
+driver.find_element(By.ID, "email").send_keys("kivircikhuseyinakyuz@gmail.com")
+driver.find_element(By.ID, "numar_pasaport").send_keys("U32117319")
+driver.find_element(By.ID, "data_nasterii").send_keys("1980-05-09")
 
 '''
 driver.execute_script("""
@@ -92,13 +118,14 @@ driver.execute_script("arguments[0].click();", day)
 
 time.sleep(10)
 transmit_button = driver.find_element(By.ID, "transmite")
+semaphore.acquire()
 driver.execute_script("arguments[0].click();", transmit_button)
 
 end_time = time.time()
 elapsed_time = end_time - start_time
-print(f"Elapsed time: {elapsed_time} seconds")
+#print(f"Elapsed time: {elapsed_time} seconds")
 
 time.sleep(5)
-driver.save_screenshot("form_filled4.png")
+driver.save_screenshot("form_filled5.png")
 
 driver.quit()
