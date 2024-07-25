@@ -38,7 +38,7 @@ class InterceptAddon:
             flow.intercept()
             # Modify the request
             if "application/x-www-form-urlencoded" in flow.request.headers.get("Content-Type", ""):
-                flow.request.urlencoded_form["data_programarii"] = "2024-11-19"
+                flow.request.urlencoded_form["data_programarii"] = "2024-11-25"
                 flow.request.urlencoded_form["tip_formular"] = "4"
                 #time.sleep(5)
                 #new_time = datetime.datetime.now().strftime("%a, %d %b %Y %H:%M:%S GMT")

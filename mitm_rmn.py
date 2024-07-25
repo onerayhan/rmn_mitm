@@ -44,7 +44,6 @@ proxy = "localhost:8080"
 chrome_options = Options()
 chrome_options.add_argument(f"--proxy-server=http://{proxy}")
 chrome_options.add_argument("--disable-extensions")
-chrome_options.add_argument("--headless")
 chrome_options.add_argument("--disable-gpu")
 chrome_options.add_argument("--no-sandbox")
 chrome_options.add_argument("--disable-dev-shm-usage")
@@ -77,6 +76,7 @@ driver.execute_script("arguments[0].click();", element)
 select_element = Select(driver.find_element(By.ID, "tip_formular"))
 select_element.select_by_value("6")
 
+
 # Fill out the input fields
 driver.find_element(By.ID, "nume_pasaport").send_keys("Akyuz")
 driver.find_element(By.ID, "prenume_pasaport").send_keys("Huseyin")
@@ -86,6 +86,16 @@ driver.find_element(By.ID, "prenume_tata").send_keys("Ahmet")
 driver.find_element(By.ID, "email").send_keys("kivircikhuseyinakyuz@gmail.com")
 driver.find_element(By.ID, "numar_pasaport").send_keys("U32117319")
 driver.find_element(By.ID, "data_nasterii").send_keys("1980-05-09")
+'''
+driver.find_element(By.ID, "nume_pasaport").send_keys("Akarsd")
+driver.find_element(By.ID, "prenume_pasaport").send_keys("Huesdhg")
+driver.find_element(By.ID, "locul_nasterii").send_keys("Isdst")
+driver.find_element(By.ID, "prenume_mama").send_keys("Safi")
+driver.find_element(By.ID, "prenume_tata").send_keys("Ahmas")
+driver.find_element(By.ID, "email").send_keys("kivsyuz@gmail.com")
+driver.find_element(By.ID, "numar_pasaport").send_keys("U345319")
+driver.find_element(By.ID, "data_nasterii").send_keys("1981-06-09")
+'''
 
 '''
 driver.execute_script("""
