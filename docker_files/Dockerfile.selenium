@@ -1,0 +1,54 @@
+# Dockerfile for Selenium script
+FROM selenium/standalone-chrome:latest
+# Install Python and pip
+USER root
+RUN apt-get update && apt-get install -y \
+    python3-venv \
+    python3-pip \
+    libnss3-tools \
+    ca-certificates
+RUN sudo apt-get install --reinstall python3-pkg-resources
+# Create a virtual environment and install required Python packages
+RUN python3 -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+RUN pip install --upgrade pip setuptools wheel
+
+# Install required Python packages in the virtual environment
+RUN pip install google-cloud-logging protobuf==3.20.1
+
+# Install required Python packages
+COPY requirements_selenium.txt /app/
+RUN pip install -r /app/requirements_selenium.txt
+
+
+# Copy the script into the container
+COPY mitm_rmn.py /app/
+
+
+# Create directories for Chrome profile and certificates
+#RUN mkdir -p /root/.pki/nssdb /etc/ssl/certs
+# Create directories for Chrome profile and certificates
+RUN mkdir -p /root/.pki/nssdb /usr/share/ca-certificates/extra
+RUN certutil -N -d sql:/root/.pki/nssdb --empty-password
+
+# Copy the mitmproxy certificate to the container
+# COPY mitmproxy-ca-cert.pem /etc/ssl/certs/
+# COPY mitmproxy-ca-cert.pem /usr/local/share/ca-certificates/mitmproxy-ca-cert.crt
+# Import the mitmproxy certificate into the system and browser's trust store
+# RUN update-ca-certificates \
+# && certutil -d sql:/root/.pki/nssdb -A -t "C,," -n mitmproxy -i /usr/local/share/ca-certificates/mitmproxy-ca-cert.crt
+# Import the mitmproxy certificate into the browser's trust store
+# Copy the mitmproxy certificate to the container
+COPY mitmproxy-ca-cert.crt /usr/share/ca-certificates/extra/mitmproxy-ca-cert.crt
+
+RUN certutil -d sql:/root/.pki/nssdb -A -t "C,," -n mitmproxy -i /usr/share/ca-certificates/extra/mitmproxy-ca-cert.crt
+
+RUN echo "extra/mitmproxy-ca-cert.crt" | sudo tee -a /etc/ca-certificates.conf
+# Update the system's CA certificates
+RUN update-ca-certificates
+# Set the working directory
+WORKDIR /app
+
+# Run the selenium script
+CMD ["python3", "mitm_rmn.py"]

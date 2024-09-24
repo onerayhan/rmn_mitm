@@ -1,0 +1,52 @@
+version: '3'
+services:
+  mitmdump:
+    image: gcr.io/programare-cetatenie-tr/mitmdump-script:6.2
+    ports:
+      - "8080:8080"
+    environment:
+      - GCS_BUCKET_NAME=rmn-bucket
+      - DATA_PROGRAMARII=2024-11-26
+      - TIP_FORMULAR=4 
+    networks:
+      - mynetwork
+    stdin_open: true
+    volumes:
+      - type: bind
+        source: /home/onerayhan/mitmproxy-ca-cert.crt
+        target: /usr/share/ca-certificates/extra/mitmproxy-ca-cert.crt
+
+  selenium:
+    image: gcr.io/programare-cetatenie-tr/selenium-script:6.0
+    depends_on:
+      - mitmdump
+    environment:
+      - HOUR=14
+      - MINUTE=51
+      - SECOND=10
+      - MICROSECOND=750000
+      - TIP_FORMULAR=6
+      - NUME_PASAPORT=Akyuz
+      - PRENUME_PASAPORT=Huseyin
+      - LOCUL_NASTERII=Istanbul
+      - PRENUME_MAMA=Safiye
+      - PRENUME_TATA=Ahmet
+      - EMAIL=kivircikhuseyinakyuz@gmail.com
+      - NUMAR_PASAPORT=U32117319
+      - DATA_NASTERII=1980-05-09
+      - DAY_ORDER_IN_CALENDAR=15
+      - MONTH_ORDER_IN_CALENDAR=10
+      - PROXY_HOST=mitmdump
+      - PROXY_PORT=8080
+      - GCS_BUCKET_NAME=rmn-bucket
+      - WEBSITE_URL=https://www.gclogoogle.com/
+    networks:
+      - mynetwork
+    volumes:
+      - type: bind
+        source: /home/onerayhan/mitmproxy-ca-cert.crt
+        target: /usr/share/ca-certificates/extra/mitmproxy-ca-cert.crt
+
+networks:
+  mynetwork:
+

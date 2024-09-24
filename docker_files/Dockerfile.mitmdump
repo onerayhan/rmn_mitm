@@ -1,0 +1,47 @@
+# Dockerfile for mitmproxy script
+FROM python:3.12.3-slim
+
+USER root
+
+RUN apt-get update && apt-get install -y \
+    python3-venv \
+    ca-certificates
+
+RUN apt-get install --reinstall python3-pkg-resources
+
+
+RUN python3 -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+RUN pip install --upgrade pip setuptools wheel
+
+# Install mitmproxy
+RUN pip install mitmproxy google-cloud-storage google-cloud-logging protobuf==3.20.1
+
+# Copy the requirements file and install dependencies
+COPY requirements_mitm.txt /app/
+RUN pip install -r /app/requirements_mitm.txt
+
+# Copy the script into the container
+COPY mitm_dump_intercept.py /app/
+
+# Create a directory for custom certificates
+RUN mkdir -p /usr/share/ca-certificates/extra
+
+# Copy the mitmproxy certificate to the container
+COPY mitmproxy-ca-cert.crt /usr/share/ca-certificates/extra/mitmproxy-ca-cert.crt
+
+RUN echo "extra/mitmproxy-ca-cert.crt" | tee -a /etc/ca-certificates.conf
+
+
+RUN update-ca-certificates
+
+# Set the working directory
+WORKDIR /app
+
+# Expose necessary ports
+EXPOSE 8080
+
+# Run the mitmproxy script with mitmdump
+CMD ["mitmdump", "-s", "mitm_dump_intercept.py"]
+

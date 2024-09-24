@@ -1,0 +1,24 @@
+# Dockerfile for mitmproxy script
+FROM python:3.12.3-slim
+
+# Install mitmproxy
+RUN pip install mitmproxy
+
+# Copy the requirements file and install dependencies
+COPY requirements_mitm.txt /app/
+RUN pip install -r /app/requirements_mitm.txt
+
+
+# Copy the script into the container
+COPY mitm_intercept.py /app/
+COPY mitm_entrypoint.sh /app/
+RUN chmod +x /app/mitm_entrypoint.sh
+
+# Set the working directory
+WORKDIR /app
+
+# Expose necessary ports
+EXPOSE 8080
+
+# Set entrypoint
+ENTRYPOINT ["/app/mitm_entrypoint.sh"]
