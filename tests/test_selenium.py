@@ -34,4 +34,16 @@ class TestSelenium(unittest.TestCase):
     def test_form_fill(self):
         # Open the test form page
         self.driver.get("http://mitm.it/")
-       
+        print(f"Opened MITM Proxy test page.")
+
+        # Example of interacting with form elements (replace with actual test logic)
+        # self.driver.find_element(By.ID, "form_field_id").send_keys("test data")
+        # Submit the form or click
+        # self.driver.find_element(By.ID, "submit_button").click()
+
+    def tearDown(self):
+        # Close the browser after the tests
+        self.driver.quit()
+
+if __name__ == "__main__":
+    unittest.main()
